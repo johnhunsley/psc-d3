@@ -6,29 +6,24 @@
           <a class="navbar-brand" href="#"></a>
 
           <router-link :to="'/'"
-            class="btn btn-primary btn-margin">
+            class="btn btn-info btn-margin">
               Home
           </router-link>
 
           <button
-            class="btn btn-primary btn-margin"
+            class="btn btn-info btn-margin"
             v-if="!authenticated"
             @click="login()">
               Log In
           </button>
 
-          <router-link :to="'/authenticated'" v-if="authenticated"
-            class="btn btn-primary btn-margin">
-            Authenitcated Area
-          </router-link>
-
-          <router-link :to="'/admin'" v-if="authenticated && admin"
-          class="btn btn-primary btn-margin">
-            Admin Area
+          <router-link :to="'/graph'" v-if="authenticated"
+            class="btn btn-info btn-margin">
+            Graph
           </router-link>
 
           <button
-            class="btn btn-primary btn-margin"
+            class="btn btn-info btn-margin"
             v-if="authenticated"
             @click="logout()">
               Log Out
@@ -44,7 +39,6 @@
         :authenticated="authenticated"
         :admin="admin">
       </router-view>
-      <simplert></simplert>
     </div>
   </div>
 </template>
