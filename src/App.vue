@@ -2,7 +2,7 @@
   <div>
     <nav class="navbar navbar-default">
       <div class="container-fluid">
-        <div class="navbar-header">
+        <div class="navbar-header form-horizontal">
           <a class="navbar-brand" href="#"></a>
 
           <router-link :to="'/'"
@@ -29,6 +29,10 @@
               Log Out
           </button>
 
+          <span class="form-inline" v-if="authenticated">
+            <input type="text" class="form-control" id="searchtext" placeholder="Search">
+            <button class="btn btn-info btn-margin btn-sm" @click="search()">Search</button>
+          </span>
         </div>
       </div>
     </nav>
@@ -65,7 +69,10 @@ export default {
   },
   methods: {
     login,
-    logout
+    logout,
+    search: function () {
+      console.log('clicked search')
+    }
   }
 }
 </script>

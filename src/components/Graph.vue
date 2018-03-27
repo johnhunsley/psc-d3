@@ -8,12 +8,27 @@
 </template>
 <script>
   import D3Network from 'vue-d3-network'
+  import {API_CONF} from './api-variables.js'
 
   export default {
     name: 'home',
     props: ['auth', 'authenticated', 'admin'],
     components: {
       D3Network
+    },
+    mounted () {
+      this.getCompleteGraph()
+    },
+    methods: {
+      getCompleteGraph: function () {
+        this.$http.get(API_CONF.baseUrl + '/api/allEdges', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}}).then(function (response) {
+          console.log(response)
+          this.nodes = response.data.nodes
+          this.links = response.data.links
+        }, function (response) {
+          console.log(response)
+        })
+      }
     },
     data () {
       return {
@@ -56,10 +71,14 @@
         ],
         options:
         {
-          force: 3500,
-          nodeSize: 20,
+          force: 3000,
+          nodeSize: 10,
           nodeLabels: true,
-          linkWidth: 3
+          linkWidth: 1,
+          size: {
+            w: 1130,
+            h: 830
+          }
         }
       }
     }

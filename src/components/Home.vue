@@ -2,7 +2,7 @@
   <div>
     <div class="left">
       <h4 v-if="authenticated">
-          Hello {{auth.getNickName()}},&nbsp;<span v-if="authenticated && admin">You have admin priviledges</span>
+          Hello {{auth.getNickName()}},&nbsp;<span v-if="authenticated && admin"> welcome to the PSC Graph. You have admin priviledges</span>
 </h4>
       <h4 v-if="!authenticated">
         You are not logged in! Please <a @click="auth.login()">Log In</a> to continue.
