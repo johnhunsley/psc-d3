@@ -22,7 +22,13 @@ const router = new Router({
       props: true
     },
     {
-      path: '/graph',
+      path: '/completeGraph',
+      name: 'Graph',
+      component: Graph,
+      props: true
+    },
+    {
+      path: '/graph/:searchtext',
       name: 'Graph',
       component: Graph,
       props: true

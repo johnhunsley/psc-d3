@@ -2,7 +2,7 @@
   <div>
     <nav class="navbar navbar-default">
       <div class="container-fluid">
-        <div class="navbar-header form-horizontal">
+        <div class="navbar-header">
           <a class="navbar-brand" href="#"></a>
 
           <router-link :to="'/'"
@@ -17,10 +17,12 @@
               Log In
           </button>
 
-          <router-link :to="'/graph'" v-if="authenticated"
-            class="btn btn-info btn-margin">
-            Graph
-          </router-link>
+          <button
+            class="btn btn-info btn-margin"
+            v-if="authenticated"
+                @click="showComplete()">
+                Graph
+          </button>
 
           <button
             class="btn btn-info btn-margin"
@@ -30,7 +32,7 @@
           </button>
 
           <span class="form-inline" v-if="authenticated">
-            <input type="text" class="form-control" id="searchtext" placeholder="Search">
+            <input v-model="searchtext" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchtext">
             <button class="btn btn-info btn-margin btn-sm" @click="search()">Search</button>
           </span>
         </div>
@@ -41,7 +43,8 @@
       <router-view
         :auth="auth"
         :authenticated="authenticated"
-        :admin="admin">
+        :admin="admin"
+        :searchtext="searchtext">
       </router-view>
     </div>
   </div>
@@ -49,6 +52,7 @@
 
 <script>
 import AuthService from './auth/AuthService'
+import router from './router'
 
 const auth = new AuthService()
 
@@ -64,14 +68,20 @@ export default {
     return {
       auth,
       authenticated,
-      admin
+      admin,
+      searchtext: ''
     }
   },
   methods: {
     login,
     logout,
     search: function () {
-      console.log('clicked search')
+      console.log('searching for ' + this.searchtext)
+      router.push({name: 'Graph', params: {searchtext: this.searchtext}})
+    },
+    showComplete: function () {
+      console.log('showing complete graph')
+      router.push({name: 'Graph', params: {showcomplete: true}})
     }
   }
 }
@@ -82,5 +92,8 @@ export default {
 
 .btn-margin {
   margin-top: 7px
+}
+.search-box {
+  width: 250px
 }
 </style>
