@@ -1,43 +1,43 @@
 <template>
   <div>
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
+    <div class="navbar navbar-default">
+      <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#"></a>
-
-          <router-link :to="'/'"
-            class="btn btn-info btn-margin">
-              Home
-          </router-link>
-
-          <button
-            class="btn btn-info btn-margin"
-            v-if="!authenticated"
-            @click="login()">
-              Log In
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
           </button>
-
-          <button
-            class="btn btn-info btn-margin"
-            v-if="authenticated"
-                @click="showComplete()">
-                Graph
-          </button>
-
-          <button
-            class="btn btn-info btn-margin"
-            v-if="authenticated"
-            @click="logout()">
-              Log Out
-          </button>
-
-          <span class="form-inline" v-if="authenticated">
-            <input v-model="searchtext" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" id="searchtext">
-            <button class="btn btn-info btn-margin btn-sm" @click="search()">Search</button>
-          </span>
+          <a class="navbar-brand" href="/">PSC Graph</a>
         </div>
+        <div class="navbar-collapse collapse" id="searchbar">
+          <ul class="nav navbar-nav navbar-right">
+            <li v-if="!authenticated">
+              <a href="#logout" data-prevent="" @click="login()">Log In</a>
+            </li>
+            <li id="userPage">
+              <router-link :to="'/home'">Home</router-link>
+            </li>
+            <li v-if="authenticated"><a href="#logout" data-prevent="" @click="logout()">Logout</a></li>
+          </ul>
+          <ul v-if="authenticated" class="nav navbar-nav navbar-right">
+              <li><a href="" data-prevent="" @click="showComplete()">Graph</a></li>
+          </ul>
+
+          <form class="navbar-form">
+            <div class="form-group" style="display:inline;">
+              <div class="input-group" style="display:table;">
+                <span class="input-group-addon" style="width:1%;">
+                    <span class="glyphicon glyphicon-search">
+                    </span>
+                </span>
+                <input class="form-control" v-model="searchtext" name="search" placeholder="Search" autocomplete="off" autofocus="autofocus" type="text">
+              </div>
+            </div>
+          </form>
+        </div><!--/.nav-collapse -->
       </div>
-    </nav>
+    </div>
 
     <div class="container">
       <router-view
@@ -92,8 +92,5 @@ export default {
 
 .btn-margin {
   margin-top: 7px
-}
-.search-box {
-  width: 250px
 }
 </style>
