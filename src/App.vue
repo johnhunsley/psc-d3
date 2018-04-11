@@ -45,6 +45,7 @@
 
     <div class="container">
       <graph :auth="auth" :authenticated="authenticated" :admin="admin" :searchtext="selected"></graph>
+      <router-view :auth="auth" :authenticated="authenticated" :admin="admin" :searchtext="searchtext"></router-view>
     </div>
   </div>
 </template>

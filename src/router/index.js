@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Callback from '@/components/Callback'
-import Graph from '@/components/Graph'
 
 Vue.use(Router)
 
@@ -19,12 +18,6 @@ const router = new Router({
       path: '/callback',
       name: 'Callback',
       component: Callback,
-      props: true
-    },
-    {
-      path: '/graph',
-      name: 'Graph',
-      component: Graph,
       props: true
     },
     {
