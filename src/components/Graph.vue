@@ -12,13 +12,14 @@
 
   export default {
     name: 'graph',
-    props: ['auth', 'authenticated', 'admin', 'searchtext'],
+    props: {
+      auth: Object,
+      authenticated: Boolean,
+      admin: Boolean,
+      searchtext: Array
+    },
     components: {
       D3Network
-    },
-    mounted () {
-      console.log('mounted and searching for ' + this.searchtext)
-      this.getGraph(this.searchtext)
     },
     methods: {
       getGraph: function (searchtext) {
@@ -42,6 +43,15 @@
         }, function (response) {
           console.log(response)
         })
+      },
+      getShortestPath: function (val) {
+        this.$http.get(API_CONF.baseUrl + '/api/path/' + this.searchtext[0].name + '/' + this.searchtext[1].name, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}}).then(function (response) {
+          console.log(response)
+          this.nodes = response.data.nodes
+          this.links = response.data.links
+        }, function (response) {
+          console.log(response)
+        })
       }
     },
     data () {
@@ -52,7 +62,7 @@
           force: 3000,
           nodeSize: 10,
           nodeLabels: true,
-          linkWidth: 0.3,
+          linkWidth: 0.5,
           size: {
             w: 1130,
             h: 830
@@ -63,8 +73,11 @@
     watch: {
       searchtext: function (val) {
         console.log('Searching for ' + val)
-        this.getGraph(val)
+        this.getShortestPath(val)
       }
+    },
+    mounted () {
+      this.getCompleteGraph()
     }
   }
 </script>

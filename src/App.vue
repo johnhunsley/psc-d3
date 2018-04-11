@@ -31,7 +31,11 @@
                     <span class="glyphicon glyphicon-search">
                     </span>
                 </span>
-                <input class="form-control" v-model="searchtext" name="search" placeholder="Search" autocomplete="off" autofocus="autofocus" type="text">
+                <multiselect  v-model="selected" :max="2" :options="nodes" track-by="id" :multiple="true" :searchable="true" :loading="isLoading" @search-change="getAllNodes" label="name">
+                  <template slot="clear" slot-scope="props">
+                    <div class="multiselect__clear" v-if="selected.length" @mousedown.prevent.stop="clearAll(props.search)"></div>
+                  </template><span slot="noResult">Oops! No elements found. Consider changing the search query.</span>
+                </multiselect>
               </div>
             </div>
           </form>
@@ -40,12 +44,7 @@
     </div>
 
     <div class="container">
-      <router-view
-        :auth="auth"
-        :authenticated="authenticated"
-        :admin="admin"
-        :searchtext="searchtext">
-      </router-view>
+      <graph :auth="auth" :authenticated="authenticated" :admin="admin" :searchtext="selected"></graph>
     </div>
   </div>
 </template>
@@ -53,6 +52,9 @@
 <script>
 import AuthService from './auth/AuthService'
 import router from './router'
+import Graph from '@/components/Graph'
+import Multiselect from 'vue-multiselect'
+import {API_CONF} from './components/api-variables.js'
 
 const auth = new AuthService()
 
@@ -60,6 +62,10 @@ const { login, logout, authenticated, admin, authNotifier } = auth
 
 export default {
   name: 'app',
+  components: {
+    Multiselect,
+    Graph
+  },
   data () {
     authNotifier.on('authChange', authState => {
       this.authenticated = authState.authenticated
@@ -69,19 +75,44 @@ export default {
       auth,
       authenticated,
       admin,
-      searchtext: ''
+      selected: [],
+      nodes: [],
+      isLoading: false
     }
   },
   methods: {
     login,
     logout,
     search: function () {
-      console.log('searching for ' + this.searchtext)
-      router.push({name: 'Graph', params: {searchtext: this.searchtext}})
+      console.log(this.selected.length)
+      router.push({name: 'Graph', params: {searchtext: this.selected}})
     },
     showComplete: function () {
       console.log('showing complete graph')
       router.push({name: 'Graph', params: {showcomplete: true}})
+    },
+    getAllNodes: function () {
+      this.isLoading = true
+      this.$http.get(API_CONF.baseUrl + '/api/allNodes', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}}).then(function (response) {
+        console.log(response)
+        var data = response.data.nodes
+
+        for (var i = 0; i < data.length; i++) {
+          this.nodes[i] = data[i]
+        }
+        this.isLoading = false
+      }, function (response) {
+        console.log(response)
+        this.isLoading = false
+      })
+    },
+    clearAll () {
+      this.selected = []
+    }
+  },
+  watch: {
+    selected: function (val) {
+      this.search()
     }
   }
 }
@@ -89,6 +120,7 @@ export default {
 
 <style>
 @import '../node_modules/bootstrap/dist/css/bootstrap.css';
+@import '../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
 
 .btn-margin {
   margin-top: 7px
