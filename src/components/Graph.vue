@@ -1,10 +1,17 @@
 <template>
-<div>
-    <div v-if="authenticated">
-        <d3-network :net-nodes="nodes" :net-links="links" :options="options">
-        </d3-network>
-    </div>
-</div>
+  <div>
+      <div v-if="authenticated">
+          <d3-network :net-nodes="nodes" :net-links="links" :options="options" :link-cb="lcb">
+          </d3-network>
+      </div>
+      <svg>
+        <defs>
+          <marker id="m-end" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth" >
+            <path d="M0,0 L0,6 L9,3 z"></path>
+          </marker>
+        </defs>
+      </svg>
+  </div>
 </template>
 <script>
   import D3Network from 'vue-d3-network'
@@ -22,9 +29,9 @@
       D3Network
     },
     methods: {
-      getGraph: function (searchtext) {
-        if (searchtext) {
-          this.$http.get(API_CONF.baseUrl + '/api/relatedNodes/' + searchtext, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}}).then(function (response) {
+      getGraph: function (searchObject) {
+        if (searchObject) {
+          this.$http.get(API_CONF.baseUrl + '/api/relatedNodes/' + searchObject.name, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}}).then(function (response) {
             console.log(response)
             this.nodes = response.data.nodes
             this.links = response.data.links
@@ -45,13 +52,17 @@
         })
       },
       getShortestPath: function (val) {
-        this.$http.get(API_CONF.baseUrl + '/api/path/' + this.searchtext[0].name + '/' + this.searchtext[1].name, {headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}}).then(function (response) {
+        this.$http.get(API_CONF.baseUrl + '/api/path/' + val[0].name + '/' + val[1].name + '/2', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}}).then(function (response) {
           console.log(response)
           this.nodes = response.data.nodes
           this.links = response.data.links
         }, function (response) {
           console.log(response)
         })
+      },
+      lcb: function (link) {
+        link._svgAttrs = {'marker-end': 'url(#m-end)'}
+        return link
       }
     },
     data () {
@@ -59,10 +70,10 @@
         nodes: [],
         links: [],
         options: {
-          force: 3000,
-          nodeSize: 10,
+          force: 600,
+          nodeSize: 7,
           nodeLabels: true,
-          linkWidth: 0.5,
+          linkWidth: 1.0,
           size: {
             w: 1130,
             h: 830
@@ -72,8 +83,17 @@
     },
     watch: {
       searchtext: function (val) {
-        console.log('Searching for ' + val)
-        this.getShortestPath(val)
+        switch (val.length) {
+          case 0:
+            this.getCompleteGraph()
+            break
+          case 1:
+            this.getGraph(val[0])
+            break
+          case 2:
+            this.getShortestPath(val)
+            break
+        }
       }
     },
     mounted () {
@@ -83,5 +103,7 @@
 </script>
 
 <style>
-
+#m-end path {
+  fill: #90c6cc;
+}
 </style>

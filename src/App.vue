@@ -45,14 +45,13 @@
 
     <div class="container">
       <graph :auth="auth" :authenticated="authenticated" :admin="admin" :searchtext="selected"></graph>
-      <router-view :auth="auth" :authenticated="authenticated" :admin="admin" :searchtext="searchtext"></router-view>
+      <router-view :auth="auth" :authenticated="authenticated" :admin="admin" :searchtext="selected"></router-view>
     </div>
   </div>
 </template>
 
 <script>
 import AuthService from './auth/AuthService'
-import router from './router'
 import Graph from '@/components/Graph'
 import Multiselect from 'vue-multiselect'
 import {API_CONF} from './components/api-variables.js'
@@ -84,14 +83,6 @@ export default {
   methods: {
     login,
     logout,
-    search: function () {
-      console.log(this.selected.length)
-      router.push({name: 'Graph', params: {searchtext: this.selected}})
-    },
-    showComplete: function () {
-      console.log('showing complete graph')
-      router.push({name: 'Graph', params: {showcomplete: true}})
-    },
     getAllNodes: function () {
       this.isLoading = true
       this.$http.get(API_CONF.baseUrl + '/api/allNodes', {headers: {'Authorization': 'Bearer ' + localStorage.getItem('access_token')}}).then(function (response) {
@@ -109,11 +100,6 @@ export default {
     },
     clearAll () {
       this.selected = []
-    }
-  },
-  watch: {
-    selected: function (val) {
-      this.search()
     }
   }
 }
